@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon -r dotenv/config .",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node .."
+    "start": "node ."
   },
   "repository": {
     "type": "git",
@@ -17,5 +18,12 @@
   "bugs": {
     "url": "https://github.com/gecko-voice/skillmanager/issues"
   },
-  "homepage": "https://github.com/gecko-voice/skillmanager#readme"
+  "homepage": "https://github.com/gecko-voice/skillmanager#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22",
+    "dotenv": "^16.0.3"
+  }
 }
