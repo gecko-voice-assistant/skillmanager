@@ -22,7 +22,11 @@ router.use("/skill/:skillId", (req, res, next) => {
 
 function startAPI(port = 3000) {
     return new Promise((resolve, reject) => {
-        app.listen(port, () => resolve(`Listening on: http://127.0.0.1:${port}`));
+        try{
+            app.listen(port, () => resolve(`Listening on: http://127.0.0.1:${port}`));
+        }catch (err) {
+            reject(err);
+        }
     })
 }
 
