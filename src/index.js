@@ -1,10 +1,3 @@
-const express = require("express");
-const app = express();
+const {startAPI} = require("./api");
 
-app.get("/", (req, res) => {
-    res.send("Hello World!");
-});
-
-app.listen(process.env.PORT, () => {
-    console.log(`Listening on: http://127.0.0.1:${process.env.PORT}`);
-});
+startAPI(3000).then(console.log);
