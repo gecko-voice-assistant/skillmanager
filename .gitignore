@@ -2,3 +2,5 @@
 .idea
 src/node_modules
 src/.env
+src/config
+!**/.gitkeep
