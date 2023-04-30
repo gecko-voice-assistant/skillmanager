@@ -11,14 +11,18 @@ app.use("/:version/:locale", (req, res, next) => {
     next();
 }, router);
 
-const rootRouter = require("./api/root");
+const rootRouter = require("../api/root");
 router.use("/", rootRouter);
 
-const skillRouter = require("./api/skill");
+const skillRouter = require("../api/skill");
 router.use("/skill/:skillId", (req, res, next) => {
     req["skillId"] = req.params["skillId"];
     next();
 }, skillRouter);
+
+const downloadRouter = require("../api/download");
+router.use("/download", downloadRouter);
+
 
 function startAPI(port = 3000) {
     return new Promise((resolve, reject) => {

@@ -1,12 +1,12 @@
 {
   "name": "skillmanager",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "devmon": "nodemon -r dotenv/config .",
     "dev": "node -r dotenv/config .",
-    "start": "node ."
+    "start": "node .",
+    "nodemon": "nodemon ."
   },
   "repository": {
     "type": "git",
@@ -22,10 +22,15 @@
   "dependencies": {
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "gecko-skillkit": "file:../../skillkit/src",
+    "mqtt": "^4.3.7",
+    "test": "file:skills/Test/1.0/src",
+    "test2": "file:skills/Test2/1.0/src"
   },
   "devDependencies": {
     "dotenv": "^16.0.3",
     "nodemon": "^2.0.22"
-  }
+  },
+  "description": ""
 }
