@@ -1,5 +1,4 @@
 const {registerEventHandler, mqttPublish} = require("./mqttClient");
-const {print} = require("gecko-skillkit");
 const skillHandler = require("./skillHandler");
 const gsk = require("gecko-skillkit");
 

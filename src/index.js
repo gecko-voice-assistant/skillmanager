@@ -2,7 +2,6 @@ const {startAPI} = require("./core/api");
 const {startMQTTClient} = require("./core/mqttClient");
 const {startHermesAdapter} = require("./core/hermesAdapter");
 const {startSkillHandler} = require("./core/skillHandler");
-const {readFromConfigFile, writeToConfigFile} = require("./core/utilityFunctions");
 
 init().catch(console.error)
 
