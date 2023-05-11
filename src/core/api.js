@@ -26,9 +26,9 @@ router.use("/download", downloadRouter);
 
 function startAPI(port = 3000) {
     return new Promise((resolve, reject) => {
-        try{
+        try {
             app.listen(port, () => resolve(`Listening on: http://127.0.0.1:${port}`));
-        }catch (err) {
+        } catch (err) {
             reject(err);
         }
     })

@@ -1,14 +1,15 @@
 const mqtt = require("mqtt");
 let client;
 const handlerMap = {
-    "default": () => {}
+    "default": () => {
+    }
 }
 
 async function startMQTTClient(mqttHost = "127.0.0.1", mqttPort = "1883") {
     client = await mqtt.connect(`mqtt://${mqttHost}:${mqttPort}`);
 
     client.on("connect", () => {
-        client.on("message", (topic, message) =>{
+        client.on("message", (topic, message) => {
             let handlerToTopic;
 
             for (let topicInHandleMap in handlerMap) {
@@ -32,7 +33,7 @@ function registerEventHandler(topic = "", handler) {
     }
 }
 
-function mqttPublish(topic = "", message = ""){
+function mqttPublish(topic = "", message = "") {
     client.publish(topic, message);
 }
 

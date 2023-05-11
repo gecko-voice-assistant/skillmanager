@@ -3,7 +3,7 @@ const path = require("path");
 const {readFromConfigFile, asyncFilter} = require("../core/utilityFunctions");
 const {exec} = require("child_process");
 
-function readLocaleFile(skillName){
+function readLocaleFile(skillName) {
     const config = readFromConfigFile("skills");
     const locale = config["language"];
     const {name, version} = config["skills"].find(skill => skill.name === skillName);
@@ -15,7 +15,7 @@ function getIntentData(skill, intent) {
     return readLocaleFile(skill)["intents"][intent];
 }
 
-function readPackageFile(pathToPackage){
+function readPackageFile(pathToPackage) {
     return JSON.parse(fs.readFileSync(path.join(pathToPackage, "package.json")).toString());
 }
 
@@ -28,7 +28,7 @@ async function loadSkills() {
                     if (err) {
                         console.error(err);
                         resolve([]);
-                    }else{
+                    } else {
                         resolve(files.map(filename => path.parse(filename).name));
                     }
                 })
@@ -43,7 +43,7 @@ async function loadSkills() {
     const skillPaths = skillsToLoad.map(skill => path.join("skills", skill["name"], skill["version"], "src"));
 
     const installed = await new Promise((resolve, reject) => {
-        exec(`npm install ${skillPaths.join(" ")}`, {cwd: rootPath}, (err, stdout) => {
+        exec(`npm install ${skillPaths.join(" ")}`, {cwd: rootPath}, (err) => {
             if (err) {
                 reject(err);
             } else {
@@ -53,8 +53,8 @@ async function loadSkills() {
     }).catch(console.error) || false;
 
     let loadedSkills = {};
-    if (installed){
-        for (let i in skillsToLoad){
+    if (installed) {
+        for (let i in skillsToLoad) {
             loadedSkills[skillsToLoad[i]["name"]] = require(readPackageFile(skillPaths[i])["name"]);
         }
     }
