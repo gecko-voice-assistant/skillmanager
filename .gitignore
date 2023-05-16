@@ -1,7 +1,6 @@
 .vscode
 .idea
 src/node_modules
-src/.env
 src/config
 src/skills
 !**/.gitkeep

@@ -1,23 +1,23 @@
-const { readFromConfigFile } = require('../core/utilityFunctions');
-const { readLocaleFile } = require('../core/skillFileManager');
-const router = require('express').Router();
+const { readFromConfigFile } = require("../core/utilityFunctions");
+const { readLocaleFile } = require("../core/skillFileManager");
+const router = require("express").Router();
 
-router.get('/', (req, res) => {
-    res.send('hello World!');
+router.get("/", (req, res) => {
+    res.send("hello World!");
 });
 
-router.get('/skills', (req, res) => {
-    const skills = readFromConfigFile('skills')['skills'];
+router.get("/skills", (req, res) => {
+    const skills = readFromConfigFile("skills")["skills"];
 
     try {
         res.json(
             skills.map((skill) => {
-                const localeData = readLocaleFile(skill['name']) || {};
+                const localeData = readLocaleFile(skill["name"]) || {};
                 return {
-                    name: skill['name'] || '',
-                    description: localeData['description'] || '',
-                    version: skill['version'] || '1.0',
-                    active: skill['active'],
+                    name: skill["name"] || "",
+                    description: localeData["description"] || "",
+                    version: skill["version"] || "1.0",
+                    active: skill["active"],
                 };
             })
         );
@@ -27,7 +27,7 @@ router.get('/skills', (req, res) => {
     }
 });
 
-router.post('/restart', (req, res) => {
+router.post("/restart", (req, res) => {
     // todo implement restart
     res.json({});
 });

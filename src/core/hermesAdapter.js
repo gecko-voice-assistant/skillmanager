@@ -1,15 +1,15 @@
-const { registerEventHandler, mqttPublish } = require('./mqttClient');
-const skillHandler = require('./skillHandler');
-const gsk = require('gecko-skillkit');
+const { registerEventHandler, mqttPublish } = require("./mqttClient");
+const skillHandler = require("./skillHandler");
+const gsk = require("gecko-skillkit");
 
 async function startHermesAdapter() {
-    registerEventHandler('hermes/intent/#', hermesHandler);
+    registerEventHandler("hermes/intent/#", hermesHandler);
 
     gsk.setConfigData({
         sayFunction: ttsSay,
     });
 
-    return 'Hermes-Adapter connected';
+    return "Hermes-Adapter connected";
 }
 
 function hermesHandler(topic, message) {
@@ -19,7 +19,7 @@ function hermesHandler(topic, message) {
     skillHandler.handleSkill(skill, intent, slots, siteId, sessionId);
 }
 
-function ttsSay(text = '') {
+function ttsSay(text = "") {
     const { sessionId, siteId } = skillHandler.getSessionData();
 
     const message = {
@@ -28,7 +28,7 @@ function ttsSay(text = '') {
         sessionId: sessionId,
     };
 
-    mqttPublish('hermes/ttsSay', JSON.stringify(message));
+    mqttPublish("hermes/ttsSay", JSON.stringify(message));
 }
 
 module.exports = {
