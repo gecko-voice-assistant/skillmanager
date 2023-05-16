@@ -1,16 +1,16 @@
-const skillFileManager = require("./skillFileManager");
+const skillFileManager = require('./skillFileManager');
 
 let skills = {};
 
 let sessionData = {
-    sessionId: "",
-    siteId: ""
-}
+    sessionId: '',
+    siteId: '',
+};
 
 async function startSkillHandler() {
     skills = await skillFileManager.loadSkills();
 
-    return "Skill-Handler started";
+    return 'Skill-Handler started';
 }
 
 function getSessionData() {
@@ -18,8 +18,8 @@ function getSessionData() {
 }
 
 function handleSkill(skill, intent, slots, siteId, sessionId) {
-    sessionData["siteId"] = siteId;
-    sessionData["sessionId"] = sessionId;
+    sessionData['siteId'] = siteId;
+    sessionData['sessionId'] = sessionId;
 
     executeIntent(skill, intent, slots).then(console.log).catch(console.error);
 }
@@ -28,15 +28,21 @@ function executeIntent(skill, intent, slots) {
     return new Promise((resolve, reject) => {
         try {
             const intentData = skillFileManager.getIntentData(skill, intent);
-            const functionName = intentData["function"];
+            const functionName = intentData['function'];
 
-            const args = intentData["args"].map(parameterName => {
-                return slots.find(slot => slot["slotName"] === parameterName)["value"]["value"];
+            const args = intentData['args'].map((parameterName) => {
+                return slots.find(
+                    (slot) => slot['slotName'] === `${skill}_${parameterName}`
+                )['value']['value'];
             });
 
             skills[skill][functionName].apply(this, args);
 
-            resolve(`Executing ${skill}.${functionName} with parameters ${args.join(", ")}`);
+            resolve(
+                `Executing ${skill}.${functionName} with parameters ${args.join(
+                    ', '
+                )}`
+            );
         } catch (err) {
             reject(err);
         }
@@ -44,5 +50,7 @@ function executeIntent(skill, intent, slots) {
 }
 
 module.exports = {
-    startSkillHandler, handleSkill, getSessionData
-}
+    startSkillHandler,
+    handleSkill,
+    getSessionData,
+};
