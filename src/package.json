@@ -3,11 +3,9 @@
     "version": "1.0.0",
     "main": "index.js",
     "scripts": {
-        "devmon": "nodemon -r dotenv/config .",
-        "dev": "node -r dotenv/config .",
         "start": "node .",
         "nodemon": "nodemon .",
-        "lint": "eslint .",
+        "lint": "eslint --fix .",
         "format": "prettier --write ."
     },
     "repository": {
@@ -22,6 +20,7 @@
     },
     "homepage": "https://github.com/gecko-voice/skillmanager#readme",
     "dependencies": {
+        "adm-zip": "^0.5.10",
         "axios": "^1.4.0",
         "body-parser": "^1.20.2",
         "cors": "^2.8.5",
@@ -32,7 +31,6 @@
         "test2": "file:skills/Test2/1.0/src"
     },
     "devDependencies": {
-        "dotenv": "^16.0.3",
         "eslint": "^8.40.0",
         "eslint-config-prettier": "^8.8.0",
         "nodemon": "^2.0.22",

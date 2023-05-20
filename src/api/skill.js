@@ -1,11 +1,11 @@
-const { readLocaleFile } = require("../core/skillFileManager");
-const { readFromConfigFile } = require("../core/utilityFunctions");
+const { readLocaleFile, setSkillProperty, loadSkills } = require("../core/skillFileManager");
+const { readFromConfigFile, printError } = require("../core/utilityFunctions");
 const { registerSkill, unregisterSkill } = require("../core/rhasspyAdapter");
 const router = require("express").Router();
 
 router.get("/details", (req, res) => {
     const { description, intents, slots } = readLocaleFile(req["skillId"]);
-    const { version, active } = readFromConfigFile("skills")["skills"].find((skill) => skill.name === req["skillId"]);
+    const { version, active } = readFromConfigFile("skills")["skills"][req["skillId"]] || {};
 
     res.send({
         description: description || "",
@@ -16,36 +16,38 @@ router.get("/details", (req, res) => {
     });
 });
 
-router.get("/activate", (req, res) => {
+router.get("/activate", async (req, res) => {
     let status = 200;
-    let data = {};
-
-    registerSkill(req["skillId"])
-        .then((msg) => {
-            data["message"] = msg["data"];
-        })
-        .catch((err) => {
-            console.error(err);
-            data["message"] = err;
-            status = 500;
-        })
-        .finally(() => res.status(status).json(data));
+    let msg = "";
+    try {
+        msg = (await registerSkill(req["skillId"]))["data"];
+        setSkillProperty(req["skillId"], "active", true);
+        await loadSkills();
+    } catch (err) {
+        setSkillProperty(req["skillId"], "active", false);
+        msg = err.toString();
+        status = 500;
+        printError(err);
+    } finally {
+        res.status(status).json({ message: msg });
+    }
 });
 
-router.get("/deactivate", (req, res) => {
+router.get("/deactivate", async (req, res) => {
     let status = 200;
-    let data = {};
-
-    unregisterSkill(req["skillId"])
-        .then((msg) => {
-            data["message"] = msg["data"];
-        })
-        .catch((err) => {
-            console.error(err);
-            data["message"] = err;
-            status = 500;
-        })
-        .finally(() => res.status(status).json(data));
+    let msg = "";
+    try {
+        msg = (await unregisterSkill(req["skillId"]))["data"];
+        setSkillProperty(req["skillId"], "active", false);
+        await loadSkills();
+    } catch (err) {
+        setSkillProperty(req["skillId"], "active", true);
+        msg = err.toString();
+        status = 500;
+        printError(err);
+    } finally {
+        res.status(status).json({ message: msg });
+    }
 });
 
 router.post("/options", (req, res) => {

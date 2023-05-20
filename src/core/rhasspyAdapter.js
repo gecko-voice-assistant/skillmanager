@@ -1,7 +1,12 @@
 const axios = require("axios");
-const { readFromConfigFile } = require("./utilityFunctions");
 const { readLocaleFile } = require("./skillFileManager");
-const rhasspyPath = readFromConfigFile("main")["rhasspy"] || "http://127.0.0.1:12101";
+let rhasspyPath;
+
+async function startRhasspyAdapter(rhasspy = "http://127.0.0.1:12101") {
+    rhasspyPath = rhasspy;
+
+    return "Hermes-Adapter started";
+}
 
 async function postToRhasspyAPI(endpoint = "", body = {}) {
     return await axios.post(`${rhasspyPath}${endpoint}`, body, {});
@@ -70,6 +75,7 @@ async function unregisterSkill(skillName) {
 }
 
 module.exports = {
+    startRhasspyAdapter,
     registerSkill,
     unregisterSkill,
 };

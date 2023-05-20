@@ -8,7 +8,7 @@ function readFromConfigFile(filename = "scratch") {
         if (!fs.existsSync(pathToConfig)) writeToConfigFile(filename, "{}");
         return JSON.parse(fs.readFileSync(pathToConfig).toString());
     } catch (err) {
-        console.error(err);
+        printError(err);
         return {};
     }
 }
@@ -26,8 +26,26 @@ async function asyncFilter(arr, callback) {
     );
 }
 
+function printError(err) {
+    let error;
+    if (typeof err === "object" && err.name === "Error") {
+        error = err;
+    } else {
+        error = new Error(err);
+    }
+    // eslint-disable-next-line no-console
+    console.error(error);
+}
+
+function printLog(...data) {
+    // eslint-disable-next-line no-console
+    console.log(...data);
+}
+
 module.exports = {
     readFromConfigFile,
     writeToConfigFile,
     asyncFilter,
+    printError,
+    printLog,
 };

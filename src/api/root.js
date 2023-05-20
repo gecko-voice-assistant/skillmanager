@@ -1,4 +1,4 @@
-const { readFromConfigFile } = require("../core/utilityFunctions");
+const { readFromConfigFile, printError } = require("../core/utilityFunctions");
 const { readLocaleFile } = require("../core/skillFileManager");
 const router = require("express").Router();
 
@@ -7,7 +7,14 @@ router.get("/", (req, res) => {
 });
 
 router.get("/skills", (req, res) => {
-    const skills = readFromConfigFile("skills")["skills"];
+    const config = readFromConfigFile("skills");
+
+    let skills = [];
+    for (let i in config["skills"]) {
+        let skill = config["skills"][i];
+        skill["name"] = i;
+        skills.push(skill);
+    }
 
     try {
         res.json(
@@ -22,7 +29,7 @@ router.get("/skills", (req, res) => {
             })
         );
     } catch (err) {
-        console.error(err);
+        printError(err);
         res.status(500).json({});
     }
 });

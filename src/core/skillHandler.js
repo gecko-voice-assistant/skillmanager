@@ -1,4 +1,5 @@
 const skillFileManager = require("./skillFileManager");
+const { printError, printLog } = require("./utilityFunctions");
 
 let skills = {};
 
@@ -21,7 +22,7 @@ function handleSkill(skill, intent, slots, siteId, sessionId) {
     sessionData["siteId"] = siteId;
     sessionData["sessionId"] = sessionId;
 
-    executeIntent(skill, intent, slots).then(console.log).catch(console.error);
+    executeIntent(skill, intent, slots).then(printLog).catch(printError);
 }
 
 function executeIntent(skill, intent, slots) {
