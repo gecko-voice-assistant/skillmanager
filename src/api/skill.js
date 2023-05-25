@@ -1,5 +1,22 @@
-const { readLocaleFile, setSkillProperty, loadSkills } = require("../core/skillFileManager");
-const { readFromConfigFile, printError } = require("../core/utilityFunctions");
+/*
+This file is part of G.E.C.K.O.
+Copyright (C) 2023  Finn Wehn
+
+G.E.C.K.O. is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+const { readLocaleFile, setSkillProperty, loadSkills, deleteSkill } = require("../core/skillFileManager");
+const { readFromConfigFile, printError, printLog } = require("../core/utilityFunctions");
 const { registerSkill, unregisterSkill } = require("../core/rhasspyAdapter");
 const router = require("express").Router();
 
@@ -50,8 +67,27 @@ router.get("/deactivate", async (req, res) => {
     }
 });
 
+router.get("/delete", async (req, res) => {
+    let status = 200;
+    let msg = "";
+    try {
+        await unregisterSkill(req["skillId"]);
+        setSkillProperty(req["skillId"], "active", false);
+        msg = await deleteSkill(req["skillId"]);
+    } catch (err) {
+        setSkillProperty(req["skillId"], "active", true);
+        msg = err.toString();
+        status = 500;
+        printError(err);
+    } finally {
+        res.status(status).json({ message: msg });
+    }
+});
+
 router.post("/options", (req, res) => {
-    res.json(req.body);
+    printLog(req.body);
+
+    res.json({});
 });
 
 module.exports = router;

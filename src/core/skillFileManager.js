@@ -1,8 +1,32 @@
+/*
+This file is part of G.E.C.K.O.
+Copyright (C) 2023  Finn Wehn
+
+G.E.C.K.O. is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
 const fs = require("fs");
 const path = require("path");
 const { readFromConfigFile, asyncFilter } = require("../core/utilityFunctions");
 const { exec } = require("child_process");
 const { writeToConfigFile, printError } = require("./utilityFunctions");
+const rootPath = path.join(__dirname, "..");
+
+let activeSkills = {};
+
+function getActiveSkills() {
+    return activeSkills;
+}
 
 function readLocaleFile(skillName) {
     try {
@@ -71,8 +95,7 @@ async function loadSkills() {
         return false;
     });
 
-    const rootPath = path.join(__dirname, "..");
-    const skillPaths = skillsToLoad.map((skill) => path.join("skills", skill["name"], skill["version"], "src"));
+    const skillPaths = skillsToLoad.map((skill) => path.join(".", "skills", skill["name"], skill["version"], "src"));
 
     const installed =
         (await new Promise((resolve, reject) => {
@@ -92,12 +115,50 @@ async function loadSkills() {
         }
     }
 
-    return loadedSkills;
+    activeSkills = loadedSkills;
+}
+
+async function deleteSkill(skillName) {
+    let uninstalled = true;
+
+    let skillConfig = readFromConfigFile("skills");
+    const skillsList = skillConfig["skills"];
+    const packageName = readPackageFile(path.join(".", "skills", skillName, skillsList[skillName]["version"], "src"))[
+        "name"
+    ];
+
+    if (activeSkills[skillName]) {
+        uninstalled =
+            (await new Promise((resolve, reject) => {
+                exec(`npm uninstall ${packageName}`, { cwd: rootPath }, (err) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(true);
+                    }
+                });
+            }).catch(printError)) || false;
+    }
+
+    if (uninstalled) {
+        setSkillProperty(skillName, "active", false);
+        await loadSkills();
+
+        delete skillConfig["skills"][skillName];
+        writeToConfigFile(skillConfig, "skills");
+
+        fs.rmSync(path.join(".", "skills", skillName), { recursive: true, force: true });
+        return `Skill deleted successfully: ${skillName}`;
+    }
+
+    throw new Error(`Skill could not be removed: ${skillName}`);
 }
 
 module.exports = {
+    getActiveSkills,
     readLocaleFile,
     setSkillProperty,
     getIntentData,
     loadSkills,
+    deleteSkill,
 };

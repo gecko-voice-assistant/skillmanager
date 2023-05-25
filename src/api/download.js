@@ -1,3 +1,20 @@
+/*
+This file is part of G.E.C.K.O.
+Copyright (C) 2023  Finn Wehn
+
+G.E.C.K.O. is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
 const axios = require("axios");
 const admZip = require("adm-zip");
 const { readFromConfigFile, printError } = require("../core/utilityFunctions");
@@ -13,7 +30,15 @@ router.get("/list", (req, res) => {
     axios
         .get(path)
         .then((response) => {
-            res.status(200).json({ skills: response.data });
+            let installableSkills = response.data;
+            const installedSkills = readFromConfigFile("skills")["skills"];
+
+            for (let i in installableSkills) {
+                installableSkills[i]["installed"] =
+                    installedSkills[i] && installedSkills[i]["version"] ? installedSkills[i]["version"] : "";
+            }
+
+            res.status(200).json({ skills: installableSkills });
         })
         .catch((err) => {
             printError(err);
