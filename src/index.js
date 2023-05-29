@@ -25,7 +25,7 @@ const { startRhasspyAdapter } = require("./core/rhasspyAdapter");
 const mainConfig = readFromConfigFile("main");
 const skillConfig = readFromConfigFile("skills");
 
-if (mainConfig === {}){
+if (Object.keys(mainConfig).length === 0){
     writeToConfigFile({
             apiPort: 3000,
             skillserver: "https://skillserver.fwehn.de",
@@ -38,7 +38,7 @@ if (mainConfig === {}){
     )
 }
 
-if (skillConfig === {}){
+if (Object.keys(skillConfig).length === 0){
     writeToConfigFile(
         {
             language: "de_DE",

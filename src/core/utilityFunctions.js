@@ -22,7 +22,10 @@ const configDir = path.join(__dirname, "..", "config");
 function readFromConfigFile(filename = "scratch") {
     try {
         let pathToConfig = path.join(configDir, `${filename}.json`);
-        if (!fs.existsSync(pathToConfig)) writeToConfigFile(filename, "{}");
+        if (!fs.existsSync(pathToConfig)) {
+            writeToConfigFile({}, filename);
+            return {};
+        }
         return JSON.parse(fs.readFileSync(pathToConfig).toString());
     } catch (err) {
         printError(err);
