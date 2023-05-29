@@ -19,10 +19,34 @@ const { startAPI } = require("./core/api");
 const { startMQTTClient } = require("./core/mqttClient");
 const { startHermesAdapter } = require("./core/hermesAdapter");
 const { startSkillHandler } = require("./core/skillHandler");
-const { printError, printLog, readFromConfigFile } = require("./core/utilityFunctions");
+const { printError, printLog, readFromConfigFile, writeToConfigFile } = require("./core/utilityFunctions");
 const { startRhasspyAdapter } = require("./core/rhasspyAdapter");
 
 const mainConfig = readFromConfigFile("main");
+const skillConfig = readFromConfigFile("skills");
+
+if (mainConfig === {}){
+    writeToConfigFile({
+            "apiPort": 3000,
+            "skillserver": "https://skillserver.fwehn.de",
+            "language": "de_DE",
+            "mqttHost": "127.0.0.1",
+            "mqttPort": 1883,
+            "rhasspy": "http://127.0.0.1:12101"
+        },
+        "main"
+    )
+}
+
+if (skillConfig === {}){
+    writeToConfigFile(
+        {
+            language: "de_DE",
+            skills: {}
+        },
+        "skills"
+    )
+}
 
 init().catch(printError);
 
