@@ -18,12 +18,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 const skillFileManager = require("./skillFileManager");
 const { printError, printLog } = require("./utilityFunctions");
 const gsk = require("gecko-skillkit");
-const { getActiveSkills } = require("./skillFileManager");
+const { getActiveSkills, getSkillOptions } = require("./skillFileManager");
 
 let sessionData = {
     sessionId: "",
     siteId: "",
-    answers: [],
+    skill: "",
+    answers: []
 };
 
 async function startSkillHandler() {
@@ -31,6 +32,7 @@ async function startSkillHandler() {
 
     gsk.setConfigData({
         answerFunction: generateAnswer,
+        optionsFunction: getAllOptions
     });
 
     return "Skill-Handler started";
@@ -65,15 +67,27 @@ function generateAnswer(answerIndex, ...args) {
     return generatedAnswer;
 }
 
+function getAllOptions() {
+    const options = getSkillOptions(sessionData.skill);
+    let returnObject = {};
+
+    for (let i in options){
+        returnObject[i] = options[i]["value"] || "";
+    }
+
+    return returnObject;
+}
+
 function executeIntent(skill, intent, slots) {
     return new Promise((resolve, reject) => {
         try {
             const intentData = skillFileManager.getIntentData(skill, intent);
             const functionName = intentData["function"];
+            sessionData.skill = skill;
             sessionData.answers = intentData["answers"];
 
             const args = intentData["args"].map((parameterName) => {
-                return slots.find((slot) => slot["slotName"] === `${skill}_${parameterName}`)["value"]["value"];
+                return slots.find(slot => slot["slotName"] === parameterName)["value"]["value"];
             });
 
             getActiveSkills()[skill][functionName].apply(this, args);

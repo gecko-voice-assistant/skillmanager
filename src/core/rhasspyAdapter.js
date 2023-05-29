@@ -17,6 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 const axios = require("axios");
 const { readLocaleFile } = require("./skillFileManager");
+const { printLog } = require("./utilityFunctions");
 let rhasspyPath;
 
 async function startRhasspyAdapter(rhasspy = "http://127.0.0.1:12101") {
@@ -59,18 +60,15 @@ async function registerSkill(skillName) {
 
     let intentString = intentStringLines.join("\n");
 
-    let slotsToReplace = [];
-    const regex = /\(\$slots\/(\b\w+\b)\){(\b\1\b)}|\(\d+\.\.\d+\){(\b\w+\b)}/g;
-    [...intentString.matchAll(regex)].forEach((match) => {
-        slotsToReplace.push(...match.slice(1, 4));
-    });
+    const regex = /\(\$slots\/(\b\w+\b)\){(\b\w+\b)}/g;
+    const defaultSlots = ["launch", "gecko_days"];
 
-    const defaultSlots = ["launch"];
-    slotsToReplace = [...new Set(slotsToReplace)].filter((slotName) => !!slotName && !defaultSlots.includes(slotName));
+    intentString = intentString.replaceAll(regex, (substring, slotName, slotReference) => {
+        let newSlotName = defaultSlots.includes(slotName) ? slotName : `${skillName}_${slotName}`
+        return `($slots/${newSlotName}){${slotReference}}`;
+    })
 
-    slotsToReplace.forEach((slot) => {
-        intentString = intentString.replaceAll(slot, `${skillName}_${slot}`);
-    });
+    printLog(intentString);
 
     let data = {};
     data[`intents/${skillName}.ini`] = intentString;

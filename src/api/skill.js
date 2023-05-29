@@ -15,7 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-const { readLocaleFile, setSkillProperty, loadSkills, deleteSkill } = require("../core/skillFileManager");
+const { readLocaleFile, setSkillProperty, loadSkills, deleteSkill, getSkillOptions } = require("../core/skillFileManager");
 const { readFromConfigFile, printError, printLog } = require("../core/utilityFunctions");
 const { registerSkill, unregisterSkill } = require("../core/rhasspyAdapter");
 const router = require("express").Router();
@@ -30,6 +30,7 @@ router.get("/details", (req, res) => {
         slots: slots || [],
         version: version || "",
         active: active || false,
+        options: getSkillOptions(req["skillId"])
     });
 });
 

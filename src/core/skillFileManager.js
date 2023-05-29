@@ -19,7 +19,7 @@ const fs = require("fs");
 const path = require("path");
 const { readFromConfigFile, asyncFilter } = require("../core/utilityFunctions");
 const { exec } = require("child_process");
-const { writeToConfigFile, printError } = require("./utilityFunctions");
+const { writeToConfigFile, printError, printLog } = require("./utilityFunctions");
 const rootPath = path.join(__dirname, "..");
 
 let activeSkills = {};
@@ -154,6 +154,30 @@ async function deleteSkill(skillName) {
     throw new Error(`Skill could not be removed: ${skillName}`);
 }
 
+function getSkillOptions(skillName) {
+    try {
+        let values = {};
+
+        const config = readFromConfigFile("skills");
+        const {version, options = {}} = config["skills"][skillName];
+        const defaults = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "skills", skillName, version, "manifest.json")).toString())["options"];
+
+        for (let i in defaults){
+            values[i] = {
+                "name": defaults[i]["name"],
+                "type": defaults[i]["type"],
+                "value": options[i] || defaults[i]["default"],
+                "choices": defaults[i]["choices"] || []
+            };
+        }
+
+        return values;
+    } catch (err) {
+        printError(err);
+        return {};
+    }
+}
+
 module.exports = {
     getActiveSkills,
     readLocaleFile,
@@ -161,4 +185,5 @@ module.exports = {
     getIntentData,
     loadSkills,
     deleteSkill,
+    getSkillOptions
 };

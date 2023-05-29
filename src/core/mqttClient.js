@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 const mqtt = require("mqtt");
+const gsk = require("gecko-skillkit");
 let client;
 const handlerMap = {
     default: () => {},
@@ -36,6 +37,11 @@ async function startMQTTClient(mqttHost = "127.0.0.1", mqttPort = "1883") {
 
             (handlerToTopic ? handlerToTopic : handlerMap["default"])(topic, JSON.parse(message.toString()));
         });
+    });
+
+    gsk.setConfigData({
+        mqttPublishFunction: mqttPublish,
+        mqttSubscribeFunction: registerEventHandler
     });
 
     return "Connected to MQTT-Host";
