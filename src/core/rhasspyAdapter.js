@@ -68,8 +68,6 @@ async function registerSkill(skillName) {
         return `($slots/${newSlotName}){${slotReference}}`;
     })
 
-    printLog(intentString);
-
     let data = {};
     data[`intents/${skillName}.ini`] = intentString;
     await postToRhasspyAPI("/api/sentences", data);

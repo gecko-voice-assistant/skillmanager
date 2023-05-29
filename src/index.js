@@ -30,9 +30,9 @@ if (Object.keys(mainConfig).length === 0){
             apiPort: 3000,
             skillserver: "https://skillserver.fwehn.de",
             language: "de_DE",
-            mqttHost: "127.0.0.1",
+            mqttHost: "mqttbroker",
             mqttPort: 1883,
-            rhasspy: "http://127.0.0.1:12101"
+            rhasspy: "http://rhasspy"
         },
         "main"
     )
