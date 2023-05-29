@@ -4,3 +4,5 @@ src/node_modules
 src/config
 src/skills
 !**/.gitkeep
+package.json
+package-lock.json
