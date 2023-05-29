@@ -27,12 +27,12 @@ const skillConfig = readFromConfigFile("skills");
 
 if (mainConfig === {}){
     writeToConfigFile({
-            "apiPort": 3000,
-            "skillserver": "https://skillserver.fwehn.de",
-            "language": "de_DE",
-            "mqttHost": "127.0.0.1",
-            "mqttPort": 1883,
-            "rhasspy": "http://127.0.0.1:12101"
+            apiPort: 3000,
+            skillserver: "https://skillserver.fwehn.de",
+            language: "de_DE",
+            mqttHost: "127.0.0.1",
+            mqttPort: 1883,
+            rhasspy: "http://127.0.0.1:12101"
         },
         "main"
     )
