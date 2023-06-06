@@ -17,7 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 const axios = require("axios");
 const admZip = require("adm-zip");
-const { readFromConfigFile, printError } = require("../core/utilityFunctions");
+const { readFromConfigFile, printError, filterObject } = require("../core/utilityFunctions");
 const { setSkillProperty } = require("../core/skillFileManager");
 const router = require("express").Router();
 
@@ -30,7 +30,7 @@ router.get("/list", (req, res) => {
     axios
         .get(path)
         .then((response) => {
-            let installableSkills = response.data;
+            let installableSkills = filterObject(response.data, (skill) => skill["versions"].length > 0);
             const installedSkills = readFromConfigFile("skills")["skills"];
 
             for (let i in installableSkills) {

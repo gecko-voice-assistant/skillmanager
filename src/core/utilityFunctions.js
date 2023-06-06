@@ -62,10 +62,15 @@ function printLog(...data) {
     console.log(...data);
 }
 
+function filterObject(obj, callback) {
+    return Object.fromEntries(Object.entries(obj).filter(([key, val]) => callback(val, key)));
+}
+
 module.exports = {
     readFromConfigFile,
     writeToConfigFile,
     asyncFilter,
     printError,
     printLog,
+    filterObject,
 };

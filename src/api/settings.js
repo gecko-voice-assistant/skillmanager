@@ -15,11 +15,39 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-const { readFromConfigFile } = require("../core/utilityFunctions");
+const { readFromConfigFile, filterObject, writeToConfigFile, printError } = require("../core/utilityFunctions");
 const router = require("express").Router();
+const changeableSettings = ["skillserver", "language", "mqttHost", "mqttPort", "rhasspy"];
 
 router.get("/", (req, res) => {
-    res.json(readFromConfigFile("main"));
+    const config = readFromConfigFile("main");
+
+    res.json({
+        version: "",
+        settings: filterObject(config, (value, key) => changeableSettings.includes(key)),
+    });
+});
+
+router.post("/", (req, res) => {
+    let result = {};
+    let code = 200;
+
+    try {
+        const changes = filterObject(req.body, (value, key) => changeableSettings.includes(key));
+        let config = readFromConfigFile("main");
+
+        for (let i in changes) {
+            if (typeof config[i] !== typeof changes[i]) continue;
+            config[i] = changes[i];
+        }
+
+        writeToConfigFile(config, "main");
+    } catch (err) {
+        printError(err);
+        code = 500;
+    } finally {
+        res.status(code).json(result);
+    }
 });
 
 module.exports = router;

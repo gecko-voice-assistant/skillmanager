@@ -41,7 +41,7 @@ async function startMQTTClient(mqttHost = "127.0.0.1", mqttPort = "1883") {
 
     gsk.setConfigData({
         mqttPublishFunction: mqttPublish,
-        mqttSubscribeFunction: registerEventHandler
+        mqttSubscribeFunction: registerEventHandler,
     });
 
     return "Connected to MQTT-Host";

@@ -1,0 +1,10 @@
+{
+    "slots": {
+        "de_DE": {
+            "launch": ["_", "öffne", "benutze", "starte", "frag", "sag", "spiel"]
+        },
+        "en_US": {
+            "launch": ["_", "open", "use", "start", "ask", "tell", "play"]
+        }
+    }
+}

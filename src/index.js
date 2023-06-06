@@ -25,27 +25,27 @@ const { startRhasspyAdapter } = require("./core/rhasspyAdapter");
 const mainConfig = readFromConfigFile("main");
 const skillConfig = readFromConfigFile("skills");
 
-if (Object.keys(mainConfig).length === 0){
-    writeToConfigFile({
+if (Object.keys(mainConfig).length === 0) {
+    writeToConfigFile(
+        {
             apiPort: 3000,
             skillserver: "https://skillserver.fwehn.de",
             language: "de_DE",
             mqttHost: "mqttbroker",
             mqttPort: 1883,
-            rhasspy: "http://rhasspy"
+            rhasspy: "http://rhasspy",
         },
         "main"
-    )
+    );
 }
 
-if (Object.keys(skillConfig).length === 0){
+if (Object.keys(skillConfig).length === 0) {
     writeToConfigFile(
         {
-            language: "de_DE",
-            skills: {}
+            skills: {},
         },
         "skills"
-    )
+    );
 }
 
 init().catch(printError);

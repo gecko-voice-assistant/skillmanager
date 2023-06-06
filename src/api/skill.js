@@ -15,8 +15,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-const { readLocaleFile, setSkillProperty, loadSkills, deleteSkill, getSkillOptions } = require("../core/skillFileManager");
-const { readFromConfigFile, printError, printLog } = require("../core/utilityFunctions");
+const {
+    readLocaleFile,
+    setSkillProperty,
+    loadSkills,
+    deleteSkill,
+    getSkillOptions,
+} = require("../core/skillFileManager");
+const { readFromConfigFile, printError, filterObject } = require("../core/utilityFunctions");
 const { registerSkill, unregisterSkill } = require("../core/rhasspyAdapter");
 const router = require("express").Router();
 
@@ -30,7 +36,7 @@ router.get("/details", (req, res) => {
         slots: slots || [],
         version: version || "",
         active: active || false,
-        options: getSkillOptions(req["skillId"])
+        options: getSkillOptions(req["skillId"]),
     });
 });
 
@@ -86,9 +92,26 @@ router.get("/delete", async (req, res) => {
 });
 
 router.post("/options", (req, res) => {
-    printLog(req.body);
+    let result = {};
+    let code = 200;
 
-    res.json({});
+    try {
+        const changeableOptions = getSkillOptions(req["skillId"]);
+        const changes = filterObject(req.body, (value, key) => Object.keys(changeableOptions).includes(key));
+        let newOptions = {};
+
+        for (let i in changes) {
+            // if (typeof changeableOptions[i]["value"] !== typeof changes[i]["value"]) continue;
+            newOptions[i] = changes[i]["value"];
+        }
+
+        setSkillProperty(req["skillId"], "options", newOptions);
+    } catch (err) {
+        printError(err);
+        code = 500;
+    } finally {
+        res.status(code).json(result);
+    }
 });
 
 module.exports = router;

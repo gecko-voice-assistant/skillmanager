@@ -24,7 +24,8 @@ let sessionData = {
     sessionId: "",
     siteId: "",
     skill: "",
-    answers: []
+    answers: [],
+    slots: {},
 };
 
 async function startSkillHandler() {
@@ -32,7 +33,11 @@ async function startSkillHandler() {
 
     gsk.setConfigData({
         answerFunction: generateAnswer,
-        optionsFunction: getAllOptions
+        optionsFunction: getAllOptions,
+        rawTokenFunction: (slotName) =>
+            (getSessionData()["slots"].find((slot) => slot["slotName"] && slot["slotName"] === slotName) || {})[
+                "rawValue"
+            ],
     });
 
     return "Skill-Handler started";
@@ -71,7 +76,7 @@ function getAllOptions() {
     const options = getSkillOptions(sessionData.skill);
     let returnObject = {};
 
-    for (let i in options){
+    for (let i in options) {
         returnObject[i] = options[i]["value"] || "";
     }
 
@@ -85,9 +90,10 @@ function executeIntent(skill, intent, slots) {
             const functionName = intentData["function"];
             sessionData.skill = skill;
             sessionData.answers = intentData["answers"];
+            sessionData.slots = slots;
 
             const args = intentData["args"].map((parameterName) => {
-                return slots.find(slot => slot["slotName"] === parameterName)["value"]["value"];
+                return slots.find((slot) => slot["slotName"] === parameterName)["value"]["value"];
             });
 
             getActiveSkills()[skill][functionName].apply(this, args);

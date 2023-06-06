@@ -17,11 +17,17 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 const axios = require("axios");
 const { readLocaleFile } = require("./skillFileManager");
-const { printLog } = require("./utilityFunctions");
+const { readFromConfigFile } = require("./utilityFunctions");
 let rhasspyPath;
 
 async function startRhasspyAdapter(rhasspy = "http://127.0.0.1:12101") {
     rhasspyPath = rhasspy;
+
+    const defaultSlots = require("./defaults.json")["slots"][readFromConfigFile("main")["language"]];
+    for (let i in defaultSlots) {
+        await postSlots(i, defaultSlots[i], true);
+    }
+    await trainRhasspy();
 
     return "Hermes-Adapter started";
 }
@@ -64,9 +70,9 @@ async function registerSkill(skillName) {
     const defaultSlots = ["launch", "gecko_days"];
 
     intentString = intentString.replaceAll(regex, (substring, slotName, slotReference) => {
-        let newSlotName = defaultSlots.includes(slotName) ? slotName : `${skillName}_${slotName}`
+        let newSlotName = defaultSlots.includes(slotName) ? slotName : `${skillName}_${slotName}`;
         return `($slots/${newSlotName}){${slotReference}}`;
-    })
+    });
 
     let data = {};
     data[`intents/${skillName}.ini`] = intentString;

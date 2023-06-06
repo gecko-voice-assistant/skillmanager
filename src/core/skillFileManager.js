@@ -19,7 +19,7 @@ const fs = require("fs");
 const path = require("path");
 const { readFromConfigFile, asyncFilter } = require("../core/utilityFunctions");
 const { exec } = require("child_process");
-const { writeToConfigFile, printError, printLog } = require("./utilityFunctions");
+const { writeToConfigFile, printError } = require("./utilityFunctions");
 const rootPath = path.join(__dirname, "..");
 
 let activeSkills = {};
@@ -31,7 +31,7 @@ function getActiveSkills() {
 function readLocaleFile(skillName) {
     try {
         const config = readFromConfigFile("skills");
-        const locale = config["language"];
+        const locale = readFromConfigFile("main")["language"];
         const version = config["skills"][skillName]["version"];
 
         return JSON.parse(
@@ -90,7 +90,7 @@ async function loadSkills() {
                 );
             });
 
-            return locales.includes(config["language"]);
+            return locales.includes(readFromConfigFile("main")["language"]);
         }
         return false;
     });
@@ -159,15 +159,17 @@ function getSkillOptions(skillName) {
         let values = {};
 
         const config = readFromConfigFile("skills");
-        const {version, options = {}} = config["skills"][skillName];
-        const defaults = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "skills", skillName, version, "manifest.json")).toString())["options"];
+        const { version, options = {} } = config["skills"][skillName];
+        const defaults = JSON.parse(
+            fs.readFileSync(path.join(__dirname, "..", "skills", skillName, version, "manifest.json")).toString()
+        )["options"];
 
-        for (let i in defaults){
+        for (let i in defaults) {
             values[i] = {
-                "name": defaults[i]["name"],
-                "type": defaults[i]["type"],
-                "value": options[i] || defaults[i]["default"],
-                "choices": defaults[i]["choices"] || []
+                name: defaults[i]["name"],
+                type: defaults[i]["type"],
+                value: options[i] || defaults[i]["default"],
+                choices: defaults[i]["choices"] || [],
             };
         }
 
@@ -185,5 +187,5 @@ module.exports = {
     getIntentData,
     loadSkills,
     deleteSkill,
-    getSkillOptions
+    getSkillOptions,
 };
