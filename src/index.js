@@ -48,7 +48,10 @@ if (Object.keys(skillConfig).length === 0) {
     );
 }
 
-init().catch(printError);
+init().catch(err => {
+  printError(err)
+  process.exit(1);
+});
 
 async function init() {
     [
