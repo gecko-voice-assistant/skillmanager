@@ -47,7 +47,7 @@ function ttsSay(text = "") {
     };
 
     printLog(text);
-    mqttPublish("hermes/ttsSay", JSON.stringify(message));
+    mqttPublish("hermes/tts/say", JSON.stringify(message));
 }
 
 module.exports = {
