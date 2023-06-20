@@ -48,17 +48,17 @@ if (Object.keys(skillConfig).length === 0) {
     );
 }
 
-init().catch(err => {
-  printError(err)
-  process.exit(1);
+init().catch((err) => {
+    printError(err);
+    process.exit(1);
 });
 
 async function init() {
     [
         await startMQTTClient(mainConfig["mqttHost"] || "127.0.0.1", mainConfig["mqttPort"] || "1883"),
+        await startRhasspyAdapter(mainConfig["rhasspy"] || "http://127.0.0.1:12101"),
         await startHermesAdapter(),
         await startSkillHandler(),
-        await startRhasspyAdapter(mainConfig["rhasspy"] || "http://127.0.0.1:12101"),
         await startAPI(mainConfig["apiPort"] || 3000),
     ].forEach((msg) => printLog(msg));
 }

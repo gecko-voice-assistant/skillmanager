@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 const axios = require("axios");
 const { readLocaleFile } = require("./skillFileManager");
 const { readFromConfigFile } = require("./utilityFunctions");
+const gsk = require("gecko-skillkit");
 let rhasspyPath;
 
 async function startRhasspyAdapter(rhasspy = "http://127.0.0.1:12101") {
@@ -28,6 +29,13 @@ async function startRhasspyAdapter(rhasspy = "http://127.0.0.1:12101") {
         await postSlots(i, defaultSlots[i], true);
     }
     await trainRhasspy();
+
+    gsk.setConfigData({
+        dynamicSlotFunction: async (slotName, alternatives, overwrite) => {
+            await postSlots(slotName, alternatives, overwrite);
+            return await trainRhasspy();
+        },
+    });
 
     return "Hermes-Adapter started";
 }
