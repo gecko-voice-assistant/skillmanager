@@ -20,7 +20,15 @@ const app = express();
 const router = express.Router();
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const fileUpload = require("express-fileupload");
+const zip = require("express-easy-zip");
 
+app.use(
+    fileUpload({
+        createParentPath: true,
+    })
+);
+app.use(zip());
 app.use(bodyParser.json());
 app.use(cors());
 
@@ -47,6 +55,9 @@ router.use(
 
 const downloadRouter = require("../api/download");
 router.use("/download", downloadRouter);
+
+const installRouter = require("../api/install");
+router.use("/install", installRouter);
 
 const settingsRouter = require("../api/settings");
 router.use("/settings", settingsRouter);
